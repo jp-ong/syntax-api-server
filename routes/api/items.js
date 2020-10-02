@@ -42,7 +42,7 @@ router.get("/getAll/:type", (req, res) => {
           ? res
               .status(200)
               .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json(items);
+          : res.status(200).json({ items });
       });
 
     case "inventory":
@@ -55,7 +55,7 @@ router.get("/getAll/:type", (req, res) => {
           ? res
               .status(200)
               .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json(items);
+          : res.status(200).json({ items });
       });
 
     case "super":
@@ -68,7 +68,7 @@ router.get("/getAll/:type", (req, res) => {
           ? res
               .status(200)
               .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json(items);
+          : res.status(200).json({ items });
       });
 
     default:
@@ -90,7 +90,7 @@ router.get("/getOne/:type", (req, res) => {
               msg: "Error occurred while fetching item data.",
             });
           return item
-            ? res.status(200).json(item)
+            ? res.status(200).json({ item })
             : res.status(404).json({ msg: "Item does not exist." });
         }
       );
@@ -102,7 +102,7 @@ router.get("/getOne/:type", (req, res) => {
             msg: "Error occurred while fetching item data.",
           });
         return item
-          ? res.status(200).json(item)
+          ? res.status(200).json({ item })
           : res.status(404).json({ msg: "Item does not exist." });
       });
     default:
