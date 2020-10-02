@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logitech | API</title>
+    <style>
+      ::-webkit-scrollbar {
+        width: 0;
+      }
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        font-family: monospace;
+        font-size: 16px;
+        margin: 0 1rem;
+      }
+      table {
+        margin: 1rem auto;
+        box-shadow: 0 0 20px -7.5px black;
+        background-color: white;
+      }
+      th {
+        border: solid 1px black;
+        padding: 0.75rem 2rem 0.5rem;
+      }
+      td {
+        padding: 0.75rem 1rem 0.25rem;
+        border-bottom: dotted 1px black;
+      }
+      li {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      div {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: flex-start;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DATABASE</h1>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th colspan="3"><h2>Item Database</h2></th>
+          </tr>
+          <tr>
+            <th>Attribute</th>
+            <th>Data Type</th>
+            <th>Default Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>item_id</td>
+            <td>ObjectID</td>
+            <td>Auto-generated</td>
+          </tr>
+          <tr>
+            <td>item_name</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>item_description</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>item_price</td>
+            <td>Number</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>thumbnail</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>images</td>
+            <td>Array</td>
+            <td>[]</td>
+          </tr>
+          <tr>
+            <td>category</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>tags</td>
+            <td>Array</td>
+            <td>[]</td>
+          </tr>
+          <tr>
+            <td>item_stock</td>
+            <td>Number</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>reserved_stock</td>
+            <td>Number</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>sku</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>is_hidden</td>
+            <td>Boolean</td>
+            <td>false</td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th colspan="3"><h2>Order Database</h2></th>
+          </tr>
+          <tr>
+            <th>Attribute</th>
+            <th>Data Type</th>
+            <th>Default Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>order_id</td>
+            <td>ObjectID</td>
+            <td>Auto-generated</td>
+          </tr>
+          <tr>
+            <td>user</td>
+            <td>Object</td>
+            <td>{}</td>
+          </tr>
+          <tr>
+            <td>item</td>
+            <td>Object</td>
+            <td>{}</td>
+          </tr>
+          <tr>
+            <td>item_quantity</td>
+            <td>Number</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>payment_method</td>
+            <td>String</td>
+            <td>""</td>
+          </tr>
+          <tr>
+            <td>payment_status</td>
+            <td>String</td>
+            <td>"Processing"</td>
+          </tr>
+          <tr>
+            <td>order_status</td>
+            <td>String</td>
+            <td>"Processing"</td>
+          </tr>
+          <tr>
+            <td>fee</td>
+            <td>Number</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>is_deleted</td>
+            <td>Boolean</td>
+            <td>false</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h1>API</h1>
+    <table>
+      <thead>
+        <tr>
+          <th colspan="6">
+            <h1>ITEM</h1>
+            <h3>/api/items</h3>
+          </th>
+        </tr>
+        <tr>
+          <th>METHOD</th>
+          <th>ROUTE</th>
+          <th>PARAMETERS</th>
+          <th>REQUEST</th>
+          <th>RESPONSE</th>
+          <th>DESCRIPTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th rowspan="3">GET</th>
+        </tr>
+        <tr>
+          <td>
+            <a href="/api/items/getAll/type" target="_blank"
+              >/api/items/getAll/:type</a
+            >
+          </td>
+          <td>type: client / inventory</td>
+          <td>---</td>
+          <td>ARRAY of JSON Objects</td>
+          <td>
+            <ul>
+              <li>Returns an array of items.</li>
+              <li>
+                If client, excludes hidden items, contains item_id, item_name,
+                category, tags, thumbnail.
+              </li>
+              <li>
+                If inventory, includes hidden items, contains all but
+                item_description, thumbnail, images.
+              </li>
+              <li>If empty, returns an error message.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/api/items/getOne/type?id=xxx" target="_blank"
+              >/api/items/getOne/:type?id=xxx></a
+            >
+          </td>
+          <td>
+            <p>type: client / inventory</p>
+            <p>id: item_id</p>
+          </td>
+          <td>---</td>
+          <td>JSON Object</td>
+          <td>
+            <ul>
+              <li>Returns an item object.</li>
+              <li>
+                If client, excludes hidden items, contains item_id,
+                item_name,item_description, item_price, images, category, tags.
+              </li>
+              <li>
+                If inventory, includes hidden items, contains all attributes.
+              </li>
+              <li>If item not found, returns an error message.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="5">POST</th>
+        </tr>
+        <tr>
+          <td>/api/items/postOne</td>
+          <td>---</td>
+          <td>JSON Object</td>
+          <td>JSON Object</td>
+          <td>
+            <ul>
+              <li>Send new item in JSON format.</li>
+              <li>
+                If values of attributes are not specified, values are set to
+                their default values.
+              </li>
+              <li>Returns the new item if successful.</li>
+              <li>Returns an error message if unsuccessful.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>/api/items/editOne?id=xxx</td>
+          <td>id: item_id</td>
+          <td>JSON Object {attribute: value, ...}</td>
+          <td>JSON Object</td>
+          <td>
+            <ul>
+              <li>
+                Edits values of item with the new values sent as JSON Object.
+              </li>
+              <li>Returns the new item.</li>
+              <li>Returns an error message if unsuccessful.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>/api/items/disableOne?id=xxx</td>
+          <td>id: item_id</td>
+          <td>---</td>
+          <td>JSON Object {item, msg}</td>
+          <td>
+            <ul>
+              <li>Sets item isHidden to true</li>
+              <li>Returns the item and feedback message if successful</li>
+              <li>Returns an error message if unsuccessful.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>/api/items/enableOne?id=xxx</td>
+          <td>id: item_id</td>
+          <td>---</td>
+          <td>JSON Object {item, msg}</td>
+          <td>
+            <ul>
+              <li>Sets item isHidden to false</li>
+              <li>Returns the item and feedback message if successful</li>
+              <li>Returns an error message if unsuccessful.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="2">DELETE</th>
+        </tr>
+        <tr>
+          <td>/api/items/deleteOne?id=xxx</td>
+          <td>id: item_id</td>
+          <td>---</td>
+          <td>JSON Object {item, msg}</td>
+          <td>
+            <ul>
+              <li>Permanently deletes item from the database.</li>
+              <li>
+                If successful, returns the deleted item and a successful
+                message.
+              </li>
+              <li>If unsuccessful, returns a message.</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th colspan="6">
+            <h1>ORDER</h1>
+            <h3>/api/orders</h3>
+          </th>
+        </tr>
+        <tr>
+          <th>METHOD</th>
+          <th>ROUTE</th>
+          <th>PARAMETERS</th>
+          <th>REQUEST</th>
+          <th>RESPONSE</th>
+          <th>DESCRIPTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th rowspan="3">GET</th>
+        </tr>
+        <tr>
+          <td>
+            <a href="/api/orders/getAll" target="_blank">/api/orders/getAll</a>
+          </td>
+          <td>---</td>
+          <td>---</td>
+          <td>ARRAY of JSON Objects</td>
+          <td>
+            <ul>
+              <li>Returns an array of orders.</li>
+              <li>If empty, returns an error message.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/api/items/getOne?id=xxx" target="_blank"
+              >/api/items/getOne?id=xxx</a
+            >
+          </td>
+          <td>
+            <p>id: order_id</p>
+          </td>
+          <td>---</td>
+          <td>JSON Object</td>
+          <td>
+            <ul>
+              <li>Returns an order object.</li>
+              <li>If order not found, returns an error message.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="2">POST</th>
+        </tr>
+        <tr>
+          <td>/api/orders/generateOrder</td>
+          <td>---</td>
+          <td>JSON Object {user_id, item_id}</td>
+          <td>JSON Object</td>
+          <td>
+            <ul>
+              <li>Send order object in JSON format.</li>
+              <li>User ID and Item ID are required.</li>
+              <li>
+                If user or item id is invalid or not found, returns error
+                message.
+              </li>
+              <li>
+                If values of other attributes are not specified, fields are set
+                to their default values.
+              </li>
+              <li>Returns the new order if successful.</li>
+              <li>Returns an error message if unsuccessful.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th rowspan="2">DELETE</th>
+        </tr>
+        <tr>
+          <td>/api/orders/deleteOne?id=xxx</td>
+          <td>id: order_id</td>
+          <td>---</td>
+          <td>JSON Object {order, msg}</td>
+          <td>
+            <ul>
+              <li>Permanently deletes order from the database.</li>
+              <li>
+                If successful, returns the deleted prder and a successful
+                message.
+              </li>
+              <li>If unsuccessful, returns a message.</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
