@@ -7,6 +7,7 @@ const GET_ALL = {
   client: {
     item_id: 1,
     item_name: 1,
+    item_price: 1,
     category: 1,
     tags: 1,
     thumbnail: 1,
