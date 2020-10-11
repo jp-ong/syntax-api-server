@@ -21,7 +21,6 @@ const GET_ALL = {
 
 const GET_ONE = {
   client: {
-    thumbnail: 0,
     item_stock: 0,
     reserved_stock: 0,
     sku: 0,
