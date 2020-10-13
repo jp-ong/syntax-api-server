@@ -26,9 +26,9 @@ router.get("/order", (req, res) => {
 });
 
 router.post("/generate", (req, res) => {
-  const { user, item, orderedAt, payment_method } = req.body;
+  const { user, item, payment_method } = req.body;
 
-  if (!user || !item || !orderedAt || !payment_method)
+  if (!user || !item || !payment_method)
     return res.json({ msg: "Invalid request. Missing required fields." });
 
   const { item_id, quantity } = item;
@@ -45,7 +45,6 @@ router.post("/generate", (req, res) => {
         quantity,
       },
       payment_method,
-      orderedAt: new Date(orderedAt),
     });
 
     newOrder.save({}, (err, order) => {
