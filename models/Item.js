@@ -52,15 +52,4 @@ const itemSchema = new mongoose.Schema(
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
-itemSchema.set("toJSON", {
-  transform: (doc, result) => {
-    const id = result._id;
-    delete result._id;
-    return {
-      item_id: id,
-      ...result,
-    };
-  },
-});
-
 module.exports = Item = mongoose.model("Item", itemSchema);

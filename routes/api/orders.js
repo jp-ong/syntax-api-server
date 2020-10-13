@@ -26,29 +26,34 @@ router.get("/order", (req, res) => {
 });
 
 router.post("/generate", (req, res) => {
-  const { item_id } = req.body;
-  const newOrder = new Order({ item: {}, user: {}, ...req.body });
-  Item.findById(
-    item_id,
-    { item_name: 1, item_price: 1, sku: 1 },
-    (err, item) => {
-      if (err)
-        return res.json({
-          err,
-          msg: "Error occurred while fetching item data.",
-        });
-      if (!item) return res.status(404).json({ msg: "Item does not exist." });
-      newOrder.item = item;
-      newOrder.save({}, (err, order) => {
-        if (err)
-          return res.json({
-            err,
-            msg: "Error occurred while generating order.",
-          });
-        res.status(200).json({ order, msg: "Order successfully generated." });
-      });
-    }
-  );
+  const { user, item, orderedAt, payment_method } = req.body;
+
+  if (!user || !item || !orderedAt || !payment_method)
+    return res.json({ msg: "Invalid request. Missing required fields." });
+
+  const { item_id, quantity } = item;
+  Item.findById(item_id, (err, item) => {
+    if (err) return res.json({ msg: "Something went wrong." });
+    if (!item) return res.json({ msg: "Item does not exist." });
+
+    const newOrder = new Order({
+      user,
+      item: {
+        id: item._id,
+        name: item.item_name,
+        price: item.item_price,
+        quantity,
+      },
+      payment_method,
+      orderedAt: new Date(orderedAt),
+    });
+
+    newOrder.save({}, (err, order) => {
+      if (err || !order) return res.json({ msg: "Something went wrong." });
+
+      res.json({ order, msg: "Order placed." });
+    });
+  });
 });
 
 router.delete("/delete", (req, res) => {

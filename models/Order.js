@@ -3,11 +3,7 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema(
   {
     user: { type: Object, default: {} },
-    item: { type: Object, defualt: {} },
-    item_quantity: {
-      type: Number,
-      default: 0,
-    },
+    item: { type: Object, default: {} },
     payment_method: {
       type: String,
       default: "",
@@ -22,14 +18,14 @@ const orderSchema = new mongoose.Schema(
     },
     fee: {
       type: Number,
-      default: 0,
+      default: 40,
     },
     is_deleted: {
       type: Boolean,
       default: false,
     },
   },
-  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at:" } }
 );
 
 orderSchema.set("toJSON", {
