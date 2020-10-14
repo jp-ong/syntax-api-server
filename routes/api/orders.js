@@ -31,8 +31,8 @@ router.post("/generate", (req, res) => {
   if (!user || !item || !payment_method || !shipping_address)
     return res.json({ msg: "Invalid request. Missing required fields." });
 
-  const { item_id, quantity } = item;
-  Item.findById(item_id, (err, item) => {
+  const { _id, quantity } = item;
+  Item.findById(_id, (err, item) => {
     if (err) return res.json({ msg: "Something went wrong." });
     if (!item) return res.json({ msg: "Item does not exist." });
 
