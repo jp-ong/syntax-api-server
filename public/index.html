@@ -204,8 +204,8 @@
         </tr>
         <tr>
           <td>
-            <a href="/api/items/getAll/type" target="_blank"
-              >/api/items/getAll/:type</a
+            <a href="/api/items/type" target="_blank"
+              >/api/items/:type</a
             >
           </td>
           <td>type: client / inventory</td>
@@ -228,8 +228,8 @@
         </tr>
         <tr>
           <td>
-            <a href="/api/items/getOne/type?id=xxx" target="_blank"
-              >/api/items/getOne/:type?id=xxx></a
+            <a href="/api/items/item/type?id=xxx" target="_blank"
+              >/api/items/item/:type?id=xxx></a
             >
           </td>
           <td>
@@ -256,7 +256,7 @@
           <th rowspan="5">POST</th>
         </tr>
         <tr>
-          <td>/api/items/postOne</td>
+          <td>/api/items/post</td>
           <td>---</td>
           <td>JSON Object</td>
           <td>JSON Object</td>
@@ -273,7 +273,7 @@
           </td>
         </tr>
         <tr>
-          <td>/api/items/editOne?id=xxx</td>
+          <td>/api/items/edit?id=xxx</td>
           <td>id: item_id</td>
           <td>JSON Object {attribute: value, ...}</td>
           <td>JSON Object</td>
@@ -288,7 +288,7 @@
           </td>
         </tr>
         <tr>
-          <td>/api/items/disableOne?id=xxx</td>
+          <td>/api/items/disable?id=xxx</td>
           <td>id: item_id</td>
           <td>---</td>
           <td>JSON Object {item, msg}</td>
@@ -301,7 +301,7 @@
           </td>
         </tr>
         <tr>
-          <td>/api/items/enableOne?id=xxx</td>
+          <td>/api/items/enable?id=xxx</td>
           <td>id: item_id</td>
           <td>---</td>
           <td>JSON Object {item, msg}</td>
@@ -317,7 +317,7 @@
           <th rowspan="2">DELETE</th>
         </tr>
         <tr>
-          <td>/api/items/deleteOne?id=xxx</td>
+          <td>/api/items/delete?id=xxx</td>
           <td>id: item_id</td>
           <td>---</td>
           <td>JSON Object {item, msg}</td>
@@ -357,7 +357,7 @@
         </tr>
         <tr>
           <td>
-            <a href="/api/orders/getAll" target="_blank">/api/orders/getAll</a>
+            <a href="/api/orders" target="_blank">/api/orders</a>
           </td>
           <td>---</td>
           <td>---</td>
@@ -371,8 +371,8 @@
         </tr>
         <tr>
           <td>
-            <a href="/api/items/getOne?id=xxx" target="_blank"
-              >/api/items/getOne?id=xxx</a
+            <a href="/api/orders/order?id=xxx" target="_blank"
+              >/api/orders/order?id=xxx</a
             >
           </td>
           <td>
@@ -391,7 +391,7 @@
           <th rowspan="2">POST</th>
         </tr>
         <tr>
-          <td>/api/orders/generateOrder</td>
+          <td>/api/orders/generate</td>
           <td>---</td>
           <td>JSON Object {user_id, item_id}</td>
           <td>JSON Object</td>
@@ -416,7 +416,7 @@
           <th rowspan="2">DELETE</th>
         </tr>
         <tr>
-          <td>/api/orders/deleteOne?id=xxx</td>
+          <td>/api/orders/delete?id=xxx</td>
           <td>id: order_id</td>
           <td>---</td>
           <td>JSON Object {order, msg}</td>
