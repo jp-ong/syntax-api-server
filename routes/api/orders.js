@@ -3,8 +3,9 @@ const router = express.Router();
 
 const Order = require("../../models/Order");
 const Item = require("../../models/Item");
+const whitelist = require("../../middleware/whitelist");
 
-router.get("/", (req, res) => {
+router.get("/", whitelist, (req, res) => {
   Order.find({}, (err, orders) => {
     if (err)
       return res.json({ err, msg: "Error occurred while fetching orders." });
@@ -12,7 +13,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/order", (req, res) => {
+router.get("/order", whitelist, (req, res) => {
   Order.findById(req.query.id, (err, order) => {
     if (err)
       return res.json({
@@ -25,7 +26,7 @@ router.get("/order", (req, res) => {
   });
 });
 
-router.post("/generate", (req, res) => {
+router.post("/generate", whitelist, (req, res) => {
   const { user, item, payment_method, shipping_address } = req.body;
 
   if (!user || !item || !payment_method || !shipping_address)
@@ -48,7 +49,7 @@ router.post("/generate", (req, res) => {
       shipping_address,
     });
 
-    newOrder.save({}, (err, order) => {
+    newOrder.save({}, whitelist, (err, order) => {
       if (err || !order) return res.json({ msg: "Something went wrong." });
 
       res.json({ order, msg: "Order placed." });
@@ -56,7 +57,7 @@ router.post("/generate", (req, res) => {
   });
 });
 
-router.delete("/delete", (req, res) => {
+router.delete("/delete", whitelist, (req, res) => {
   Order.findByIdAndDelete(req.query.id, (err, order) => {
     if (err) return res.json({ msg: "Error occurred while deleting order." });
     return res.status(200).json({ order, msg: "Order permanently deleted." });

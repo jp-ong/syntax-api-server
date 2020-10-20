@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Item = require("../../models/Item");
+const whitelist = require("../../middleware/whitelist");
 
 const GET_ALL = {
   client: {
@@ -29,7 +30,7 @@ const GET_ONE = {
   inventory: {},
 };
 
-router.get("/:type", (req, res) => {
+router.get("/:type", whitelist, (req, res) => {
   const { client, inventory } = GET_ALL;
   switch (req.params.type) {
     case "client":
@@ -79,7 +80,7 @@ router.get("/:type", (req, res) => {
   }
 });
 
-router.get("/item/:type", (req, res) => {
+router.get("/item/:type", whitelist, (req, res) => {
   const { client, inventory } = GET_ONE;
   switch (req.params.type) {
     case "client":
@@ -113,7 +114,7 @@ router.get("/item/:type", (req, res) => {
   }
 });
 
-router.post("/post", (req, res) => {
+router.post("/post", whitelist, (req, res) => {
   const newItem = new Item(req.body);
   newItem.save({}, (err, item) => {
     if (err)
@@ -122,7 +123,7 @@ router.post("/post", (req, res) => {
   });
 });
 
-router.post("/edit", (req, res) => {
+router.post("/edit", whitelist, (req, res) => {
   Item.findByIdAndUpdate(req.query.id, req.body, { new: true }, (err, item) => {
     if (err)
       return res.json({ err, msg: "Error occurred while editing item data." });
@@ -132,7 +133,7 @@ router.post("/edit", (req, res) => {
   });
 });
 
-router.post("/disable", (req, res) => {
+router.post("/disable", whitelist, (req, res) => {
   Item.findByIdAndUpdate(
     req.query.id,
     { is_hidden: true },
@@ -148,7 +149,7 @@ router.post("/disable", (req, res) => {
   );
 });
 
-router.post("/enable", (req, res) => {
+router.post("/enable", whitelist, (req, res) => {
   Item.findByIdAndUpdate(
     req.query.id,
     { is_hidden: false },
@@ -164,7 +165,7 @@ router.post("/enable", (req, res) => {
   );
 });
 
-router.delete("/delete", (req, res) => {
+router.delete("/delete", whitelist, (req, res) => {
   Item.findByIdAndDelete(req.query.id, (err, item) => {
     if (err)
       return res.json({ err, msg: "Error occurred while deleting item." });
