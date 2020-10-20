@@ -1,4 +1,4 @@
-const ips = process.env.WHITELIST.split(" ");
+const ips = process.env.WHITELIST.split("+");
 
 const whitelist = (req, res, next) => {
   console.log(new Date().toLocaleString() + " >" + req.ip);
