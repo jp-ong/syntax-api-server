@@ -8,7 +8,9 @@ const whitelist = require("../../middleware/whitelist");
 router.get("/", whitelist, (req, res) => {
   Order.find({}, (err, orders) => {
     if (err)
-      return res.json({ err, msg: "Error occurred while fetching orders." });
+      return res
+        .status(400)
+        .json({ err, msg: "Error occurred while fetching orders." });
     return res.status(200).json({ orders });
   });
 });
@@ -22,7 +24,7 @@ router.get("/order", whitelist, (req, res) => {
       });
     return order
       ? res.status(200).json({ order })
-      : res.json({ msg: "Order does not exist." });
+      : res.status(404).json({ msg: "Order does not exist." });
   });
 });
 
@@ -30,12 +32,14 @@ router.post("/generate", whitelist, (req, res) => {
   const { user, item, payment_method, shipping_address } = req.body;
 
   if (!user || !item || !payment_method || !shipping_address)
-    return res.json({ msg: "Invalid request. Missing required fields." });
+    return res
+      .status(400)
+      .json({ msg: "Invalid request. Missing required fields." });
 
   const { _id, quantity } = item;
   Item.findById(_id, (err, item) => {
-    if (err) return res.json({ msg: "Something went wrong." });
-    if (!item) return res.json({ msg: "Item does not exist." });
+    if (err) return res.status(400).json({ msg: "Something went wrong." });
+    if (!item) return res.status(404).json({ msg: "Item does not exist." });
 
     const newOrder = new Order({
       user,
@@ -50,7 +54,8 @@ router.post("/generate", whitelist, (req, res) => {
     });
 
     newOrder.save({}, whitelist, (err, order) => {
-      if (err || !order) return res.json({ msg: "Something went wrong." });
+      if (err || !order)
+        return res.status(400).json({ msg: "Something went wrong." });
 
       res.json({ order, msg: "Order placed." });
     });
@@ -59,7 +64,10 @@ router.post("/generate", whitelist, (req, res) => {
 
 router.delete("/delete", whitelist, (req, res) => {
   Order.findByIdAndDelete(req.query.id, (err, order) => {
-    if (err) return res.json({ msg: "Error occurred while deleting order." });
+    if (err)
+      return res
+        .status(400)
+        .json({ msg: "Error occurred while deleting order." });
     return res.status(200).json({ order, msg: "Order permanently deleted." });
   });
 });
