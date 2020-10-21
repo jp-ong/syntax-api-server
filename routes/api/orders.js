@@ -24,7 +24,7 @@ router.get("/order", whitelist, (req, res) => {
       });
     return order
       ? res.status(200).json({ order })
-      : res.status(404).json({ msg: "Order does not exist." });
+      : res.json({ msg: "Order does not exist." });
   });
 });
 
@@ -38,8 +38,8 @@ router.post("/generate", whitelist, (req, res) => {
 
   const { _id, quantity } = item;
   Item.findById(_id, (err, item) => {
-    if (err) return res.status(400).json({ msg: "Something went wrong." });
-    if (!item) return res.status(404).json({ msg: "Item does not exist." });
+    if (err) return res.json({ msg: "Something went wrong." });
+    if (!item) return res.json({ msg: "Item does not exist." });
 
     const newOrder = new Order({
       user,
@@ -54,8 +54,7 @@ router.post("/generate", whitelist, (req, res) => {
     });
 
     newOrder.save({}, whitelist, (err, order) => {
-      if (err || !order)
-        return res.status(400).json({ msg: "Something went wrong." });
+      if (err || !order) return res.json({ msg: "Something went wrong." });
 
       res.json({ order, msg: "Order placed." });
     });

@@ -36,7 +36,7 @@ router.get("/:type", whitelist, (req, res) => {
     case "client":
       return Item.find({ is_hidden: false }, client, (err, items) => {
         if (err)
-          return res.status(400).json({
+          return res.json({
             err,
             msg: "Error occurred while fetching items data.",
           });
@@ -50,7 +50,7 @@ router.get("/:type", whitelist, (req, res) => {
     case "inventory":
       return Item.find({}, inventory, (err, items) => {
         if (err)
-          return res.status(400).json({
+          return res.json({
             err,
             msg: "Error occurred while fetching items data.",
           });
@@ -89,25 +89,25 @@ router.get("/item/:type", whitelist, (req, res) => {
         client,
         (err, item) => {
           if (err)
-            return res.status(400).json({
+            return res.json({
               err,
               msg: "Error occurred while fetching item data.",
             });
           return item
             ? res.status(200).json({ item })
-            : res.status(404).json({ msg: "Item does not exist." });
+            : res.json({ msg: "Item does not exist." });
         }
       );
     case "inventory":
       return Item.findById(req.query.id, inventory, (err, item) => {
         if (err)
-          return res.status(400).json({
+          return res.json({
             err,
             msg: "Error occurred while fetching item data.",
           });
         return item
           ? res.status(200).json({ item })
-          : res.status(404).json({ msg: "Item does not exist." });
+          : res.json({ msg: "Item does not exist." });
       });
     default:
       return res.json({ msg: "Invalid system type parameter." });
@@ -133,7 +133,7 @@ router.post("/edit", whitelist, (req, res) => {
         .json({ err, msg: "Error occurred while editing item data." });
     return item
       ? res.status(200).json({ item, msg: "Changes successfully saved." })
-      : res.status(404).json({ msg: "Item does not exist." });
+      : res.json({ msg: "Item does not exist." });
   });
 });
 
@@ -143,13 +143,12 @@ router.post("/disable", whitelist, (req, res) => {
     { is_hidden: true },
     { new: true },
     (err, item) => {
-      if (err)
-        return res.status(400).json({ err, msg: "Something went wrong." });
+      if (err) return res.json({ err, msg: "Something went wrong." });
       return item
         ? res
             .status(200)
             .json({ item, msg: "Item successfully disabled temporarily." })
-        : res.status(404).json({ msg: "Item does not exist." });
+        : res.json({ msg: "Item does not exist." });
     }
   );
 });
@@ -160,13 +159,12 @@ router.post("/enable", whitelist, (req, res) => {
     { is_hidden: false },
     { new: true },
     (err, item) => {
-      if (err)
-        return res.status(400).json({ err, msg: "Something went wrong." });
+      if (err) return res.json({ err, msg: "Something went wrong." });
       return item
         ? res
             .status(200)
             .json({ item, msg: "Item successfully set to enabled." })
-        : res.status(404).json({ msg: "Item does not exist." });
+        : res.json({ msg: "Item does not exist." });
     }
   );
 });
@@ -179,7 +177,7 @@ router.delete("/delete", whitelist, (req, res) => {
         .json({ err, msg: "Error occurred while deleting item." });
     return item
       ? res.status(200).json({ item, msg: "Item permanently deleted." })
-      : res.status(404).json({ msg: "Item does not exist." });
+      : res.json({ msg: "Item does not exist." });
   });
 });
 
