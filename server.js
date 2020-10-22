@@ -22,5 +22,5 @@ app.set("trust proxy", true);
 app.use("/api/items", require("./routes/api/items"));
 app.use("/api/orders", require("./routes/api/orders"));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 app.listen(port, console.log(`Server on port ${port}...`));
