@@ -15,7 +15,7 @@ const whitelist = (req, res, next) => {
     console.error(error);
     return res
       .status(500)
-      .json({ msg: "Missing Environment Variables.", status: 400, error });
+      .json({ msg: "Missing Environment Variables.", status: 500, error });
   }
 };
 
