@@ -53,7 +53,7 @@ router.post("/generate", whitelist, (req, res) => {
       shipping_address,
     });
 
-    newOrder.save({}, whitelist, (err, order) => {
+    newOrder.save({}, (err, order) => {
       if (err || !order) return res.json({ msg: "Something went wrong." });
 
       res.json({ order, msg: "Order placed." });
