@@ -1,13 +1,22 @@
-const ips = process.env.WHITELIST.split("+");
-const storeIP = process.env.STORE_IP;
-
 const whitelist = (req, res, next) => {
-  if (!ips.includes(req.ip) && storeIP !== req.ip) {
-    console.log(new Date().toLocaleString() + " >" + req.ip + " #DENIED");
-    return res.status(403).json({ error: 403, msg: "Forbidden" });
+  const date = new Date().getTime();
+
+  try {
+    const ips = process.env.WHITELIST.split("+");
+    const storeIP = process.env.STORE_IP;
+    if (!ips.includes(req.ip) && storeIP !== req.ip) {
+      console.log(`~~~~~${date}~~~~~${req.ip}~~~~~DENIED`);
+      return res.status(403).json({ error: 403, msg: "Forbidden" });
+    } else {
+      console.log(`~~~~~${date}~~~~~${req.ip}~~~~~SUCCESS`);
+      next();
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Missing Environment Variables.", status: 400, error });
   }
-  console.log(new Date().toLocaleString() + " >" + req.ip + " #SUCCESS");
-  next();
 };
 
 module.exports = whitelist;

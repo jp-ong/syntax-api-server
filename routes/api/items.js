@@ -6,7 +6,6 @@ const whitelist = require("../../middleware/whitelist");
 
 const GET_ALL = {
   client: {
-    item_id: 1,
     item_name: 1,
     item_price: 1,
     category: 1,
@@ -26,159 +25,179 @@ const GET_ONE = {
     reserved_stock: 0,
     sku: 0,
     is_hidden: 0,
+    created_at: 1,
   },
   inventory: {},
 };
 
-router.get("/:type", whitelist, (req, res) => {
-  const { client, inventory } = GET_ALL;
-  switch (req.params.type) {
+router.get("/", whitelist, (req, res) => {
+  let PROJECT = null;
+
+  switch (req.query.type) {
     case "client":
-      return Item.find({ is_hidden: false }, client, (err, items) => {
-        if (err)
-          return res.json({
-            err,
-            msg: "Error occurred while fetching items data.",
-          });
-        return items.length === 0
-          ? res
-              .status(404)
-              .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json({ items });
-      });
-
+      PROJECT = GET_ALL.client;
+      break;
     case "inventory":
-      return Item.find({}, inventory, (err, items) => {
-        if (err)
-          return res.json({
-            err,
-            msg: "Error occurred while fetching items data.",
-          });
-        return items.length === 0
-          ? res
-              .status(404)
-              .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json({ items });
-      });
-
+      PROJECT = GET_ALL.inventory;
+      break;
     case "super":
-      return Item.find({}, (err, items) => {
-        if (err)
-          return res.json({
-            err,
-            msg: "Error occurred while fetching items data.",
-          });
-        return items.length === 0
-          ? res
-              .status(404)
-              .json({ msg: "There are currently no items in the database." })
-          : res.status(200).json({ items });
-      });
-
+      PROJECT = {};
+      break;
     default:
-      return res.json({ msg: "Invalid system type parameter." });
+      return res
+        .status(400)
+        .json({ msg: "Invalid/Missing type parameter.", status: 400 });
+  }
+
+  try {
+    Item.find({ is_hidden: false }, PROJECT, (error, items) => {
+      if (error) {
+        console.error(error);
+        return res.status(400).json({
+          msg: "Error occurred while fetching Items.",
+          status: 400,
+          error,
+        });
+      } else {
+        return items !== []
+          ? res.status(200).json({ results: items.length, status: 200, items })
+          : res
+              .status(404)
+              .json({ msg: "Items database is empty.", status: 404 });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
   }
 });
 
-router.get("/item/:type", whitelist, (req, res) => {
-  const { client, inventory } = GET_ONE;
-  switch (req.params.type) {
+router.get("/item", whitelist, (req, res) => {
+  let PROJECT = null;
+
+  switch (req.query.type) {
     case "client":
-      return Item.findOne(
-        { _id: req.query.id, is_hidden: false },
-        client,
-        (err, item) => {
-          if (err)
-            return res.json({
-              err,
-              msg: "Error occurred while fetching item data.",
-            });
-          return item
-            ? res.status(200).json({ item })
-            : res.json({ msg: "Item does not exist." });
-        }
-      );
+      PROJECT = GET_ONE.client;
+      break;
     case "inventory":
-      return Item.findById(req.query.id, inventory, (err, item) => {
-        if (err)
-          return res.json({
-            err,
-            msg: "Error occurred while fetching item data.",
-          });
-        return item
-          ? res.status(200).json({ item })
-          : res.json({ msg: "Item does not exist." });
-      });
+      PROJECT = GET_ONE.inventory;
+      break;
+    case "super":
+      PROJECT = {};
+      break;
     default:
-      return res.json({ msg: "Invalid system type parameter." });
+      return res
+        .status(400)
+        .json({ msg: "Invalid/Missing type parameter.", status: 400 });
+  }
+
+  try {
+    Item.findById(
+      { _id: req.query.id, is_hidden: false },
+      PROJECT,
+      (error, item) => {
+        if (error) {
+          console.error(error);
+          return res.status(400).json({
+            msg: "Error occurred while fetching Item.",
+            status: 400,
+            error,
+          });
+        } else {
+          return item
+            ? res.status(200).json({ status: 200, item })
+            : res.status(404).json({ msg: "Item not found.", status: 404 });
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
   }
 });
 
 router.post("/post", whitelist, (req, res) => {
-  const newItem = new Item(req.body);
-  newItem.save({}, (err, item) => {
-    if (err)
-      return res
-        .status(400)
-        .json({ err, msg: "Error occurred while posting item." });
-    return res.status(200).json({ item, msg: "Item posted successfully." });
-  });
+  try {
+    const newItem = new Item(req.body);
+    newItem.save({}, (error, item) => {
+      if (error) {
+        console.error(error);
+        return res.status(400).json({
+          msg: "Error occurred while posting Item.",
+          status: 400,
+          error,
+        });
+      } else {
+        return res
+          .status(201)
+          .json({ msg: "Item successfully created.", status: 201, item });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
+  }
 });
 
-router.post("/edit", whitelist, (req, res) => {
-  Item.findByIdAndUpdate(req.query.id, req.body, { new: true }, (err, item) => {
-    if (err)
-      return res
-        .status(400)
-        .json({ err, msg: "Error occurred while editing item data." });
-    return item
-      ? res.status(200).json({ item, msg: "Changes successfully saved." })
-      : res.json({ msg: "Item does not exist." });
-  });
+router.patch("/edit", whitelist, (req, res) => {
+  try {
+    Item.findByIdAndUpdate(
+      req.query.id,
+      req.body,
+      { new: true },
+      (error, item) => {
+        if (error) {
+          console.error(error);
+          return res.status(400).json({
+            msg: "Error occurred while editing Item.",
+            status: 400,
+            error,
+          });
+        } else {
+          return item
+            ? res
+                .status(200)
+                .json({ msg: "Changes successfully saved.", status: 200, item })
+            : res.status(404).json({ msg: "Item not found.", status: 404 });
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
+  }
 });
 
-router.post("/disable", whitelist, (req, res) => {
+router.patch("/delete", whitelist, (req, res) => {
   Item.findByIdAndUpdate(
-    req.query.id,
+    { _id: req.query.id, is_hidden: false },
     { is_hidden: true },
     { new: true },
-    (err, item) => {
-      if (err) return res.json({ err, msg: "Something went wrong." });
-      return item
-        ? res
-            .status(200)
-            .json({ item, msg: "Item successfully disabled temporarily." })
-        : res.json({ msg: "Item does not exist." });
+    (error, item) => {
+      if (error) {
+        console.error(error);
+        return res
+          .status(400)
+          .json({
+            msg: "Error occurred while deleting Item.",
+            status: 400,
+            error,
+          });
+      } else {
+        return item
+          ? res.status(200).json({ msg: "Item deleted.", status: 200, item })
+          : res.status(404).json({ msg: "Item not found.", status: 404 });
+      }
     }
   );
-});
-
-router.post("/enable", whitelist, (req, res) => {
-  Item.findByIdAndUpdate(
-    req.query.id,
-    { is_hidden: false },
-    { new: true },
-    (err, item) => {
-      if (err) return res.json({ err, msg: "Something went wrong." });
-      return item
-        ? res
-            .status(200)
-            .json({ item, msg: "Item successfully set to enabled." })
-        : res.json({ msg: "Item does not exist." });
-    }
-  );
-});
-
-router.delete("/delete", whitelist, (req, res) => {
-  Item.findByIdAndDelete(req.query.id, (err, item) => {
-    if (err)
-      return res
-        .status(400)
-        .json({ err, msg: "Error occurred while deleting item." });
-    return item
-      ? res.status(200).json({ item, msg: "Item permanently deleted." })
-      : res.json({ msg: "Item does not exist." });
-  });
 });
 
 module.exports = router;

@@ -29,15 +29,4 @@ const orderSchema = new mongoose.Schema(
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at:" } }
 );
 
-orderSchema.set("toJSON", {
-  transform: (doc, result) => {
-    const id = result._id;
-    delete result._id;
-    return {
-      order_id: id,
-      ...result,
-    };
-  },
-});
-
 module.exports = Order = mongoose.model("Order", orderSchema);
