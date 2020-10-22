@@ -17,7 +17,7 @@ router.get("/", whitelist, (req, res) => {
           error,
         });
       } else {
-        return orders !== []
+        return orders.length !== 0
           ? res
               .status(200)
               .json({ results: orders.length, status: 200, orders })

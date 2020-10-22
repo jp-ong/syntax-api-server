@@ -58,7 +58,7 @@ router.get("/", whitelist, (req, res) => {
           error,
         });
       } else {
-        return items !== []
+        return items.length !== 0
           ? res.status(200).json({ results: items.length, status: 200, items })
           : res
               .status(404)
