@@ -94,8 +94,8 @@ router.get("/item", whitelist, (req, res) => {
   }
 
   try {
-    Item.findById(
-      { _id: req.query.id, is_hidden: false },
+    Item.findOne(
+      { id: req.query.id, is_hidden: false },
       PROJECT,
       (error, item) => {
         if (error) {
@@ -147,8 +147,8 @@ router.post("/post", whitelist, (req, res) => {
 
 router.patch("/edit", whitelist, (req, res) => {
   try {
-    Item.findByIdAndUpdate(
-      req.query.id,
+    Item.findOneAndUpdate(
+      { id: req.query.id, is_hidden: false },
       req.body,
       { new: true },
       (error, item) => {
@@ -177,20 +177,18 @@ router.patch("/edit", whitelist, (req, res) => {
 });
 
 router.patch("/delete", whitelist, (req, res) => {
-  Item.findByIdAndUpdate(
-    { _id: req.query.id, is_hidden: false },
+  Item.findOneAndUpdate(
+    { id: req.query.id, is_hidden: false },
     { is_hidden: true },
     { new: true },
     (error, item) => {
       if (error) {
         console.error(error);
-        return res
-          .status(400)
-          .json({
-            msg: "Error occurred while deleting Item.",
-            status: 400,
-            error,
-          });
+        return res.status(400).json({
+          msg: "Error occurred while deleting Item.",
+          status: 400,
+          error,
+        });
       } else {
         return item
           ? res.status(200).json({ msg: "Item deleted.", status: 200, item })
