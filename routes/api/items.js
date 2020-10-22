@@ -25,7 +25,6 @@ const GET_ONE = {
     reserved_stock: 0,
     sku: 0,
     is_hidden: 0,
-    created_at: 1,
   },
   inventory: {},
 };
@@ -95,7 +94,7 @@ router.get("/item", whitelist, (req, res) => {
 
   try {
     Item.findOne(
-      { id: req.query.id, is_hidden: false },
+      { _id: req.query.id, is_hidden: false },
       PROJECT,
       (error, item) => {
         if (error) {
@@ -148,7 +147,7 @@ router.post("/post", whitelist, (req, res) => {
 router.patch("/edit", whitelist, (req, res) => {
   try {
     Item.findOneAndUpdate(
-      { id: req.query.id, is_hidden: false },
+      { _id: req.query.id, is_hidden: false },
       req.body,
       { new: true },
       (error, item) => {
@@ -178,7 +177,7 @@ router.patch("/edit", whitelist, (req, res) => {
 
 router.patch("/delete", whitelist, (req, res) => {
   Item.findOneAndUpdate(
-    { id: req.query.id, is_hidden: false },
+    { _id: req.query.id, is_hidden: false },
     { is_hidden: true },
     { new: true },
     (error, item) => {

@@ -36,7 +36,7 @@ router.get("/", whitelist, (req, res) => {
 
 router.get("/order", whitelist, (req, res) => {
   try {
-    Order.findOne({ id: req.query.id, is_deleted: false }, (error, order) => {
+    Order.findOne({ _id: req.query.id, is_deleted: false }, (error, order) => {
       if (error) {
         console.error(error);
         return res.status(400).json({
@@ -69,7 +69,7 @@ router.post("/generate", whitelist, (req, res) => {
 
     const { id, quantity } = item;
 
-    Item.findOne({ id, is_hidden: false }, (error, item) => {
+    Item.findOne({ _id: id, is_hidden: false }, (error, item) => {
       if (error) {
         console.error(error);
         return res.status(400).json({
@@ -123,7 +123,7 @@ router.post("/generate", whitelist, (req, res) => {
 router.patch("/delete", whitelist, (req, res) => {
   try {
     Order.findOneAndUpdate(
-      { id: req.query.id, is_deleted: false },
+      { _id: req.query.id, is_deleted: false },
       { is_deleted: true },
       { new: true },
       (error, order) => {
