@@ -18,7 +18,7 @@ connectDB();
 
 app.use(express.static("public"));
 
-// app.set("trust proxy", true);
+app.set("trust proxy", true);
 app.use("/api/items", require("./routes/api/items"));
 app.use("/api/orders", require("./routes/api/orders"));
 
