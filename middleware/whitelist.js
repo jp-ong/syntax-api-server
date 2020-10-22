@@ -5,10 +5,10 @@ const whitelist = (req, res, next) => {
     const ips = process.env.WHITELIST.split("+");
     const storeIP = process.env.STORE_IP;
     if (!ips.includes(req.ip) && storeIP !== req.ip) {
-      console.log(`~~~~~${date}~~~~~${req.ip}~~~~~DENIED`);
+      console.error(`~~~~~@${date}~~~~~>${req.ip}~~~~~#DENIED~~~~~`);
       return res.status(403).json({ msg: "Forbidden", status: 403 });
     } else {
-      console.log(`~~~~~${date}~~~~~${req.ip}~~~~~SUCCESS`);
+      console.log(`~~~~~@${date}~~~~~>${req.ip}~~~~~#SUCCESS~~~~~`);
       next();
     }
   } catch (error) {
