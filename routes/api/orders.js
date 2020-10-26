@@ -34,6 +34,47 @@ router.get("/", whitelist, (req, res) => {
   }
 });
 
+router.get("/list", whitelist, (req, res) => {
+  try {
+    const { list } = req.body;
+    Order.find({ is_deleted: false }, (error, orders) => {
+      if (error) {
+        console.error(error);
+        return res.status(400).json({
+          msg: "Error occurred while fetching Orders.",
+          status: 400,
+          error,
+        });
+      } else {
+        if (orders.length === 0) {
+          return res.status(404).json({ status: 404, msg: "No orders found." });
+        } else {
+          const ordersList = orders.filter((order) =>
+            list.includes(order._id.toString())
+          );
+
+          if (ordersList.length === 0) {
+            return res
+              .status(404)
+              .json({ status: 404, msg: "No orders found." });
+          } else {
+            return res.status(200).json({
+              results: ordersList.length,
+              status: 200,
+              orders: ordersList,
+            });
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
+  }
+});
+
 router.get("/order", whitelist, (req, res) => {
   try {
     Order.findOne({ _id: req.query.id, is_deleted: false }, (error, order) => {

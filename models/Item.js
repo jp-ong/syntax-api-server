@@ -40,10 +40,6 @@ const itemSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-    sku: {
-      type: String,
-      default: "",
-    },
     is_hidden: {
       type: Boolean,
       default: false,
