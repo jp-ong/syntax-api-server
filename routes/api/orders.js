@@ -34,9 +34,8 @@ router.get("/", whitelist, (req, res) => {
   }
 });
 
-router.get("/list", whitelist, (req, res) => {
+router.get("/user", whitelist, (req, res) => {
   try {
-    const { list } = req.body;
     Order.find({ is_deleted: false }, (error, orders) => {
       if (error) {
         console.error(error);
@@ -49,8 +48,8 @@ router.get("/list", whitelist, (req, res) => {
         if (orders.length === 0) {
           return res.status(404).json({ status: 404, msg: "No orders found." });
         } else {
-          const ordersList = orders.filter((order) =>
-            list.includes(order._id.toString())
+          const ordersList = orders.filter(
+            (order) => order.user.id.toString() === req.query.id
           );
 
           if (ordersList.length === 0) {
