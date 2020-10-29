@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: { createdAt: "created_at", updatedAt: "updated_at:" } }
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
 module.exports = Order = mongoose.model("Order", orderSchema);
