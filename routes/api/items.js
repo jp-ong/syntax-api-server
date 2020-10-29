@@ -121,6 +121,11 @@ router.get("/item", whitelist, (req, res) => {
 
 router.post("/post", whitelist, (req, res) => {
   try {
+    if (!req.body.item_name) {
+      return res
+        .status(400)
+        .json({ msg: "Please enter item name.", status: 400 });
+    }
     const newItem = new Item(req.body);
     newItem.save({}, (error, item) => {
       if (error) {
