@@ -193,9 +193,12 @@ router.post("/generate", whitelist, (req, res) => {
             status: 400,
           });
         } else {
-          return res
-            .status(201)
-            .json({ msg: "Order successfully placed.", status: 201, order });
+          item.reserved_stock += quantity;
+          item.save({}, (error, item) => {
+            return res
+              .status(201)
+              .json({ msg: "Order successfully placed.", status: 201, order });
+          });
         }
       });
     });
