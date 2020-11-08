@@ -115,6 +115,8 @@ router.get("/:year/:month/:date", whitelist, (req, res) => {
           $lt: new Date(queryDate).setDate(queryDate.getDate() + 1),
         },
       },
+      null,
+      { sort: { created_at: -1 } },
       (error, orders) => {
         if (error) {
           return res
