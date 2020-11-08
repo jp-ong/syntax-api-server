@@ -2,10 +2,16 @@ const whitelist = (req, res, next) => {
   const date = new Date().getTime();
 
   try {
-    const ips = process.env.WHITELIST.split("+");
+    const invIP = process.env.INV_IP;
     const storeIP = process.env.STORE_IP;
+    const payIP = process.env.PAY_IP;
     const whitelistStatus = process.env.WHITELIST_STATUS;
-    if (!ips.includes(req.ip) && storeIP !== req.ip && whitelistStatus != 0) {
+    if (
+      invIP !== req.ip &&
+      storeIP !== req.ip &&
+      payIP !== req.ip &&
+      whitelistStatus != 0
+    ) {
       console.error(`~~~~~@${date}~~~~~>${req.ip}~~~~~#DENIED~~~~~`);
       return res.status(403).json({ msg: "Forbidden", status: 403 });
     } else {
