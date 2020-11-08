@@ -106,10 +106,14 @@ router.get("/order", whitelist, (req, res) => {
 router.get("/:year/:month/:date", whitelist, (req, res) => {
   try {
     const { year, month, date } = req.params;
-    const minDate = new Date(year, month - 1, date);
-    const maxDate = new Date(year, month - 1, date + 1);
+    const queryDate = new Date(year, month - 1, date);
     Order.find(
-      { created_at: { $gt: minDate, $lt: maxDate } },
+      {
+        created_at: {
+          $gt: queryDate,
+          $lt: new Date(queryDate).setDate(queryDate.getDate() + 1),
+        },
+      },
       (error, orders) => {
         if (error) {
           return res
@@ -118,13 +122,13 @@ router.get("/:year/:month/:date", whitelist, (req, res) => {
         } else {
           return orders.length === 0
             ? res.status(404).json({
-                msg: `No orders found on ${minDate.toLocaleDateString()}`,
+                msg: `No orders found on ${queryDate.toLocaleDateString()}`,
                 status: 404,
               })
             : res.status(200).json({
                 results: orders.length,
                 status: 200,
-                date: minDate.toLocaleDateString(),
+                date: queryDate.toLocaleDateString(),
                 orders,
               });
         }
