@@ -8,24 +8,29 @@ const whitelist = require("../../middleware/whitelist");
 
 router.get("/", whitelist, (req, res) => {
   try {
-    Order.find({ is_deleted: false }, (error, orders) => {
-      if (error) {
-        console.error(error);
-        return res.status(400).json({
-          msg: "Error occurred while fetching Orders.",
-          status: 400,
-          error,
-        });
-      } else {
-        return orders.length !== 0
-          ? res
-              .status(200)
-              .json({ results: orders.length, status: 200, orders })
-          : res
-              .status(404)
-              .json({ msg: "Orders database is empty.", status: 404 });
+    Order.find(
+      { is_deleted: false },
+      null,
+      { sort: { created_at: -1 } },
+      (error, orders) => {
+        if (error) {
+          console.error(error);
+          return res.status(400).json({
+            msg: "Error occurred while fetching Orders.",
+            status: 400,
+            error,
+          });
+        } else {
+          return orders.length === 0
+            ? res
+                .status(404)
+                .json({ msg: "Orders database is empty.", status: 404 })
+            : res
+                .status(200)
+                .json({ results: orders.length, status: 200, orders });
+        }
       }
-    });
+    );
   } catch (error) {
     console.error(error);
     return res
@@ -90,6 +95,41 @@ router.get("/order", whitelist, (req, res) => {
           : res.status(404).json({ msg: "Order not found.", status: 404 });
       }
     });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: 500, error });
+  }
+});
+
+router.get("/:year/:month/:date", whitelist, (req, res) => {
+  try {
+    const { year, month, date } = req.params;
+    const minDate = new Date(year, month - 1, date);
+    const maxDate = new Date(year, month - 1, date + 1);
+    Order.find(
+      { created_at: { $gt: minDate, $lt: maxDate } },
+      (error, orders) => {
+        if (error) {
+          return res
+            .status(400)
+            .json({ msg: "Invalid syntax.", status: 400, error });
+        } else {
+          return orders.length === 0
+            ? res.status(404).json({
+                msg: `No orders found on ${minDate.toLocaleDateString()}`,
+                status: 404,
+              })
+            : res.status(200).json({
+                results: orders.length,
+                status: 200,
+                date: minDate.toLocaleDateString(),
+                orders,
+              });
+        }
+      }
+    );
   } catch (error) {
     console.error(error);
     return res
