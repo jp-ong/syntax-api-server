@@ -109,6 +109,7 @@ router.get("/:year/:month/:date", whitelist, (req, res) => {
     const queryDate = new Date(year, month - 1, date);
     Order.find(
       {
+        is_deleted: false,
         created_at: {
           $gt: queryDate,
           $lt: new Date(queryDate).setDate(queryDate.getDate() + 1),
