@@ -5,8 +5,10 @@ const whitelist = (req, res, next) => {
     const invIP = process.env.INV_IP;
     const storeIP = process.env.STORE_IP;
     const payIP = process.env.PAY_IP;
+    const devIP = process.env.DEV_IP.split(",");
     const whitelistStatus = process.env.WHITELIST_STATUS;
     if (
+      !devIP.includes(req.ip) &&
       invIP !== req.ip &&
       storeIP !== req.ip &&
       payIP !== req.ip &&
