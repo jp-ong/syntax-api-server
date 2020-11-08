@@ -39,64 +39,6 @@ router.get("/", whitelist, (req, res) => {
   }
 });
 
-router.get("/:payStatus/:ordStatus", whitelist, (req, res) => {
-  try {
-    if (
-      (req.params.payStatus !== "processing" &&
-        req.params.payStatus !== "paid") ||
-      (req.params.ordStatus !== "processing" &&
-        req.params.ordStatus !== "delivered") ||
-      !req.params.payStatus ||
-      !req.params.ordStatus
-    ) {
-      return res
-        .status(400)
-        .json({ msg: "Invalid/Missing order payment status.", status: 400 });
-    } else {
-      const capitalize = (s) => {
-        return s.charAt(0).toUpperCase() + s.slice(1);
-      };
-      Order.find(
-        {
-          is_deleted: false,
-          payment_status: capitalize(req.params.payStatus),
-          order_status: capitalize(req.params.ordStatus),
-        },
-        null,
-        { sort: { created_at: -1 } },
-        (error, orders) => {
-          if (error) {
-            return res.status(400).json({
-              msg: `Error occurred while fetching orders`,
-              status: 400,
-            });
-          } else {
-            return orders.length === 0
-              ? res.status(404).json({
-                  msg: `No orders with specified status at the moment.`,
-                  status: 404,
-                  payment_status: req.params.payStatus,
-                  order_status: req.params.ordStatus,
-                })
-              : res.status(200).json({
-                  results: orders.length,
-                  status: 200,
-                  payment_status: req.params.payStatus,
-                  order_status: req.params.ordStatus,
-                  orders,
-                });
-          }
-        }
-      );
-    }
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ msg: "Internal Server Error", status: 500, error });
-  }
-});
-
 router.get("/user", whitelist, (req, res) => {
   try {
     Order.find({ is_deleted: false }, (error, orders) => {
@@ -195,6 +137,64 @@ router.get("/:year/:month/:date", whitelist, (req, res) => {
         }
       }
     );
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: 500, error });
+  }
+});
+
+router.get("/:payStatus/:ordStatus", whitelist, (req, res) => {
+  try {
+    if (
+      (req.params.payStatus !== "processing" &&
+        req.params.payStatus !== "paid") ||
+      (req.params.ordStatus !== "processing" &&
+        req.params.ordStatus !== "delivered") ||
+      !req.params.payStatus ||
+      !req.params.ordStatus
+    ) {
+      return res
+        .status(400)
+        .json({ msg: "Invalid/Missing order payment status.", status: 400 });
+    } else {
+      const capitalize = (s) => {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      };
+      Order.find(
+        {
+          is_deleted: false,
+          payment_status: capitalize(req.params.payStatus),
+          order_status: capitalize(req.params.ordStatus),
+        },
+        null,
+        { sort: { created_at: -1 } },
+        (error, orders) => {
+          if (error) {
+            return res.status(400).json({
+              msg: `Error occurred while fetching orders`,
+              status: 400,
+            });
+          } else {
+            return orders.length === 0
+              ? res.status(404).json({
+                  msg: `No orders with specified status at the moment.`,
+                  status: 404,
+                  payment_status: req.params.payStatus,
+                  order_status: req.params.ordStatus,
+                })
+              : res.status(200).json({
+                  results: orders.length,
+                  status: 200,
+                  payment_status: req.params.payStatus,
+                  order_status: req.params.ordStatus,
+                  orders,
+                });
+          }
+        }
+      );
+    }
   } catch (error) {
     console.error(error);
     return res
