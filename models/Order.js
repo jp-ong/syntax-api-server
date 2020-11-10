@@ -13,6 +13,14 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "Processing",
     },
+    paid_on: {
+      type: Date,
+      default: null,
+    },
+    delivered_on: {
+      type: Date,
+      default: null,
+    },
     order_status: {
       type: String,
       default: "Processing",

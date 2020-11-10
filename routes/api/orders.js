@@ -6,6 +6,10 @@ const Item = require("../../models/Item");
 
 const whitelist = require("../../middleware/whitelist");
 
+const capitalize = (s) => {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 router.get("/", whitelist, (req, res) => {
   try {
     Order.find(
@@ -111,7 +115,7 @@ router.get("/:year/:month/:date", whitelist, (req, res) => {
       {
         is_deleted: false,
         created_at: {
-          $gt: queryDate,
+          $gte: queryDate,
           $lt: new Date(queryDate).setDate(queryDate.getDate() + 1),
         },
       },
@@ -159,9 +163,6 @@ router.get("/:payStatus/:ordStatus", whitelist, (req, res) => {
         .status(400)
         .json({ msg: "Invalid/Missing order payment status.", status: 400 });
     } else {
-      const capitalize = (s) => {
-        return s.charAt(0).toUpperCase() + s.slice(1);
-      };
       Order.find(
         {
           is_deleted: false,
@@ -298,6 +299,7 @@ router.patch("/delivered", whitelist, (req, res) => {
                   .json({ msg: "Item in order not found.", status: 404 });
               } else {
                 order.order_status = "Delivered";
+                order.delivered_on = new Date();
                 order.save({}, (error, order) => {
                   if (error) {
                     return res.status(500).json({
@@ -336,6 +338,57 @@ router.patch("/delivered", whitelist, (req, res) => {
               }
             }
           );
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error", status: 500, error });
+  }
+});
+
+router.patch("/payment/:status", whitelist, (req, res) => {
+  try {
+    if (!req.query.id) {
+      return res.status(400).json({ msg: "Missing order id.", status: 400 });
+    } else if (
+      req.params.status !== "paid" &&
+      req.params.status !== "processing"
+    ) {
+      return res
+        .status(400)
+        .json({ msg: "Invalid payment status.", status: 400 });
+    } else {
+      Order.findById(req.query.id, (error, order) => {
+        if (error) {
+          return res
+            .status(400)
+            .json({ msg: "Invalid order id.", status: 400, error });
+        } else if (!order) {
+          return res
+            .status(404)
+            .json({ msg: "Order does not exist.", status: 404 });
+        } else {
+          order.payment_status = capitalize(req.params.status);
+          order.paid_on = new Date();
+          order.save({}, (error, order) => {
+            if (error) {
+              return res.status(400).json({
+                msg: "Error occurred while saving payment status.",
+                status: 400,
+                error,
+              });
+            } else {
+              return res.status(200).json({
+                msg: "Order payment status saved.",
+                status: 200,
+                payment_status: order.payment_status,
+                order,
+              });
+            }
+          });
         }
       });
     }
