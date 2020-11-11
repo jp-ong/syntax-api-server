@@ -283,6 +283,12 @@ router.patch("/delivered", whitelist, (req, res) => {
           return res
             .status(404)
             .json({ msg: "Order does not exist.", status: 404 });
+        } else if (order.order_status === "Delivered") {
+          return res.status(400).json({
+            msg: "Order was already delivered.",
+            status: 400,
+            delivered_on: order.delivered_on,
+          });
         } else {
           Item.findOne(
             { _id: order.item.id, is_hidden: false },
@@ -370,6 +376,12 @@ router.patch("/paid", whitelist, (req, res) => {
           return res
             .status(404)
             .json({ msg: "Order does not exist.", status: 404 });
+        } else if (order.payment_status === "Paid") {
+          return res.status(400).json({
+            msg: "Order was already paid for.",
+            status: 400,
+            paid_on: order.paid_on,
+          });
         } else {
           order.payment_status = "Paid";
           order.paid_on = new Date();
