@@ -349,17 +349,10 @@ router.patch("/delivered", whitelist, (req, res) => {
   }
 });
 
-router.patch("/payment/:status", whitelist, (req, res) => {
+router.patch("/paid", whitelist, (req, res) => {
   try {
     if (!req.query.id) {
       return res.status(400).json({ msg: "Missing order id.", status: 400 });
-    } else if (
-      req.params.status !== "paid" &&
-      req.params.status !== "processing"
-    ) {
-      return res
-        .status(400)
-        .json({ msg: "Invalid payment status.", status: 400 });
     } else {
       Order.findById(req.query.id, (error, order) => {
         if (error) {
@@ -371,7 +364,7 @@ router.patch("/payment/:status", whitelist, (req, res) => {
             .status(404)
             .json({ msg: "Order does not exist.", status: 404 });
         } else {
-          order.payment_status = capitalize(req.params.status);
+          order.payment_status = "Paid";
           order.paid_on = new Date();
           order.save({}, (error, order) => {
             if (error) {
