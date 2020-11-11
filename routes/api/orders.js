@@ -298,11 +298,12 @@ router.patch("/delivered", whitelist, (req, res) => {
                   .status(404)
                   .json({ msg: "Item in order not found.", status: 404 });
               } else if (item.item_stock < order.item.quantity) {
-                return res
-                  .status(400)
-                  .json({
-                    msg: "Not enough item stock to complete the delivery.",
-                  });
+                return res.status(400).json({
+                  msg: "Not enough item stock to complete the delivery.",
+                  status: 400,
+                  item_stock: item.item_stock,
+                  ordered_quantity: order.item.quantity,
+                });
               } else {
                 order.order_status = "Delivered";
                 order.delivered_on = new Date();
