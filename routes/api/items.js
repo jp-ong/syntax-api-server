@@ -126,7 +126,17 @@ router.post("/post", whitelist, (req, res) => {
         .status(400)
         .json({ msg: "Please enter item name.", status: 400 });
     }
-    const newItem = new Item(req.body);
+    const itemBody = {
+      item_name: req.body.item_name || "",
+      item_description: req.body.item_description || "",
+      item_price: req.body.item_price || 0,
+      thumbnail: req.body.thumbnail || "",
+      images: req.body.images || [],
+      category: req.body.category || "",
+      tags: req.body.tags || [],
+      item_stock: req.body.item_stock || 0,
+    };
+    const newItem = new Item(itemBody);
     newItem.save({}, (error, item) => {
       if (error) {
         console.error(error);
