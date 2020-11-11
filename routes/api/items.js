@@ -125,32 +125,31 @@ router.post("/post", whitelist, (req, res) => {
       return res
         .status(400)
         .json({ msg: "Please enter item name.", status: 400 });
+    } else if (!req.body.item_price) {
+      return res
+        .status(400)
+        .json({ msg: "Please enter item price.", status: 400 });
+    } else if (!req.body.item_stock) {
+      return res
+        .status(400)
+        .json({ msg: "Please enter item price.", status: 400 });
+    } else {
+      const newItem = new Item(itemBody);
+      newItem.save({}, (error, item) => {
+        if (error) {
+          console.error(error);
+          return res.status(400).json({
+            msg: "Error occurred while posting Item.",
+            status: 400,
+            error,
+          });
+        } else {
+          return res
+            .status(201)
+            .json({ msg: "Item successfully created.", status: 201, item });
+        }
+      });
     }
-    const itemBody = {
-      item_name: req.body.item_name || "",
-      item_description: req.body.item_description || "",
-      item_price: req.body.item_price === null ? 0 : req.body.item_price,
-      thumbnail: req.body.thumbnail || "",
-      images: req.body.images || [],
-      category: req.body.category || "",
-      tags: req.body.tags || [],
-      item_stock: req.body.item_stock === null ? 0 : req.body.item_stock,
-    };
-    const newItem = new Item(itemBody);
-    newItem.save({}, (error, item) => {
-      if (error) {
-        console.error(error);
-        return res.status(400).json({
-          msg: "Error occurred while posting Item.",
-          status: 400,
-          error,
-        });
-      } else {
-        return res
-          .status(201)
-          .json({ msg: "Item successfully created.", status: 201, item });
-      }
-    });
   } catch (error) {
     console.error(error);
     return res
