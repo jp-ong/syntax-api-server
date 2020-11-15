@@ -15,7 +15,9 @@ const whitelist = (req, res, next) => {
       whitelistStatus != 0
     ) {
       console.error(`~~~~~@${date}~~~~~>${req.ip}~~~~~#DENIED~~~~~`);
-      return res.status(403).json({ msg: "Forbidden", status: 403 });
+      return res
+        .status(403)
+        .json({ msg: "Forbidden IP", status: 403, ip: req.ip });
     } else {
       console.log(`~~~~~@${date}~~~~~>${req.ip}~~~~~#SUCCESS~~~~~`);
       next();
