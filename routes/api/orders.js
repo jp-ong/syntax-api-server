@@ -418,7 +418,12 @@ router.patch("/paid", whitelist, (req, res) => {
 router.patch("/cancel", whitelist, (req, res) => {
   try {
     Order.findOneAndUpdate(
-      { _id: req.query.id, is_deleted: false },
+      {
+        _id: req.query.id,
+        is_deleted: false,
+        payment_status: "Processing",
+        order_status: "Processing",
+      },
       {
         payment_status: "Cancelled",
         order_status: "Cancelled",
@@ -434,7 +439,9 @@ router.patch("/cancel", whitelist, (req, res) => {
             error,
           });
         } else if (!order) {
-          return res.status(404).json({ msg: "Order not found.", status: 404 });
+          return res
+            .status(404)
+            .json({ msg: "Order could not be cancelled.", status: 404 });
         } else {
           return res
             .status(200)
