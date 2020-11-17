@@ -423,6 +423,8 @@ router.patch("/delete", whitelist, (req, res) => {
         is_deleted: true,
         payment_status: "Cancelled",
         order_status: "Cancelled",
+        paid_on: null,
+        delivered_on: null,
       },
       { new: true },
       (error, order) => {
