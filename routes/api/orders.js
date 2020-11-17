@@ -415,6 +415,41 @@ router.patch("/paid", whitelist, (req, res) => {
   }
 });
 
+router.patch("/cancel", whitelist, (req, res) => {
+  try {
+    Order.findOneAndUpdate(
+      { _id: req.query.id, is_deleted: false },
+      {
+        payment_status: "Cancelled",
+        order_status: "Cancelled",
+        paid_on: null,
+        delivered_on: null,
+      },
+      { new: true },
+      (error, order) => {
+        if (error) {
+          return res.status(400).json({
+            msg: "Error occured while fetching Order.",
+            status: 400,
+            error,
+          });
+        } else if (!order) {
+          return res.status(404).json({ msg: "Order not found.", status: 404 });
+        } else {
+          return res
+            .status(200)
+            .json({ msg: "Order cancelled.", status: 200, order });
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
+  }
+});
+
 router.patch("/delete", whitelist, (req, res) => {
   try {
     Order.findOneAndUpdate(
