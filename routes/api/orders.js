@@ -274,85 +274,88 @@ router.patch("/delivered", whitelist, (req, res) => {
     if (!req.query.id) {
       return res.status(400).json({ msg: "Missing order id.", status: 400 });
     } else {
-      Order.findById(req.query.id, (error, order) => {
-        if (error) {
-          return res
-            .status(400)
-            .json({ msg: "Invalid order id.", status: 400, error });
-        } else if (!order) {
-          return res
-            .status(404)
-            .json({ msg: "Order does not exist.", status: 404 });
-        } else if (order.order_status === "Delivered") {
-          return res.status(400).json({
-            msg: "Order was already delivered.",
-            status: 400,
-            delivered_on: order.delivered_on,
-          });
-        } else {
-          Item.findOne(
-            { _id: order.item.id, is_hidden: false },
-            (error, item) => {
-              if (error) {
-                return res.status(400).json({
-                  msg: "Invalid item in in order.",
-                  status: 400,
-                  error,
-                });
-              } else if (!item) {
-                return res
-                  .status(404)
-                  .json({ msg: "Item in order not found.", status: 404 });
-              } else if (item.item_stock < order.item.quantity) {
-                return res.status(400).json({
-                  msg: "Not enough item stock to complete the delivery.",
-                  status: 400,
-                  item_stock: item.item_stock,
-                  ordered_quantity: order.item.quantity,
-                });
-              } else {
-                order.order_status = "Delivered";
-                order.delivered_on = new Date();
-                order.save({}, (error, order) => {
-                  if (error) {
-                    return res.status(500).json({
-                      msg: "Error occurred while updating order status.",
-                      status: 500,
-                      error,
-                    });
-                  } else {
-                    item.reserved_stock -= order.item.quantity;
-                    item.item_stock -= order.item.quantity;
-                    item.save({}, (error, item) => {
-                      if (error) {
-                        return res.status(500).json({
-                          msg: "Error occurred while updating item stocks.",
-                          status: 500,
-                          error,
-                        });
-                      } else {
-                        return res.status(200).json({
-                          msg:
-                            "Order status and Item stocks successfully updated.",
-                          order: {
-                            id: order._id,
-                            order_status: order.order_status,
-                          },
-                          item: {
-                            id: item._id,
-                            item_stock: item.item_stock,
-                            reserved_stock: item.reserved_stock,
-                          },
-                        });
-                      }
-                    });
-                  }
-                });
+      Order.findOne(
+        { _id: req.query.id, is_deleted: false },
+        (error, order) => {
+          if (error) {
+            return res
+              .status(400)
+              .json({ msg: "Invalid order id.", status: 400, error });
+          } else if (!order) {
+            return res
+              .status(404)
+              .json({ msg: "Order does not exist.", status: 404 });
+          } else if (order.order_status === "Delivered") {
+            return res.status(400).json({
+              msg: "Order was already delivered.",
+              status: 400,
+              delivered_on: order.delivered_on,
+            });
+          } else {
+            Item.findOne(
+              { _id: order.item.id, is_hidden: false },
+              (error, item) => {
+                if (error) {
+                  return res.status(400).json({
+                    msg: "Invalid item in in order.",
+                    status: 400,
+                    error,
+                  });
+                } else if (!item) {
+                  return res
+                    .status(404)
+                    .json({ msg: "Item in order not found.", status: 404 });
+                } else if (item.item_stock < order.item.quantity) {
+                  return res.status(400).json({
+                    msg: "Not enough item stock to complete the delivery.",
+                    status: 400,
+                    item_stock: item.item_stock,
+                    ordered_quantity: order.item.quantity,
+                  });
+                } else {
+                  order.order_status = "Delivered";
+                  order.delivered_on = new Date();
+                  order.save({}, (error, order) => {
+                    if (error) {
+                      return res.status(500).json({
+                        msg: "Error occurred while updating order status.",
+                        status: 500,
+                        error,
+                      });
+                    } else {
+                      item.reserved_stock -= order.item.quantity;
+                      item.item_stock -= order.item.quantity;
+                      item.save({}, (error, item) => {
+                        if (error) {
+                          return res.status(500).json({
+                            msg: "Error occurred while updating item stocks.",
+                            status: 500,
+                            error,
+                          });
+                        } else {
+                          return res.status(200).json({
+                            msg:
+                              "Order status and Item stocks successfully updated.",
+                            order: {
+                              id: order._id,
+                              order_status: order.order_status,
+                            },
+                            item: {
+                              id: item._id,
+                              item_stock: item.item_stock,
+                              reserved_stock: item.reserved_stock,
+                            },
+                          });
+                        }
+                      });
+                    }
+                  });
+                }
               }
-            }
-          );
+            );
+          }
         }
-      });
+      );
     }
   } catch (error) {
     console.error(error);
@@ -367,7 +370,7 @@ router.patch("/paid", whitelist, (req, res) => {
     if (!req.query.id) {
       return res.status(400).json({ msg: "Missing order id.", status: 400 });
     } else {
-      Order.findById(req.query.id, (error, order) => {
+      Order.findOne({ _id: req.query.id }, (error, order) => {
         if (error) {
           return res
             .status(400)
