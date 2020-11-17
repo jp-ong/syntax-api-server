@@ -420,11 +420,9 @@ router.patch("/delete", whitelist, (req, res) => {
     Order.findOneAndUpdate(
       { _id: req.query.id, is_deleted: false },
       {
-        $set: {
-          is_deleted: true,
-          payment_status: "Cancelled",
-          orders_status: "Cancelled",
-        },
+        is_deleted: true,
+        payment_status: "Cancelled",
+        order_status: "Cancelled",
       },
       { new: true },
       (error, order) => {
