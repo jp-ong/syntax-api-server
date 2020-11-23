@@ -446,13 +446,11 @@ router.patch("/cancel", whitelist, (req, res) => {
           Item.findById(order.item.id, (error, item) => {
             item.reserved_stock -= order.item.quantity;
             item.save({}, (error, item) => {
-              return res
-                .status(200)
-                .json({
-                  msg: "Order successfully cancelled.",
-                  status: 200,
-                  order,
-                });
+              return res.status(200).json({
+                msg: "Order successfully cancelled.",
+                status: 200,
+                order,
+              });
             });
           });
         }
