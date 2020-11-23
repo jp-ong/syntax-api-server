@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Item = require("../../models/Item");
 const whitelist = require("../../middleware/whitelist");
+const validate = require("../../middleware/validate");
 
 const GET_ALL = {
   client: {
@@ -119,7 +120,7 @@ router.get("/item", whitelist, (req, res) => {
   }
 });
 
-router.post("/post", whitelist, (req, res) => {
+router.post("/post", whitelist, validate, (req, res) => {
   try {
     if (!req.body.item_name) {
       return res
@@ -159,7 +160,7 @@ router.post("/post", whitelist, (req, res) => {
   }
 });
 
-router.patch("/edit", whitelist, (req, res) => {
+router.patch("/edit", whitelist, validate, (req, res) => {
   try {
     Item.findOneAndUpdate(
       { _id: req.query.id, is_hidden: false },
@@ -190,7 +191,7 @@ router.patch("/edit", whitelist, (req, res) => {
   }
 });
 
-router.patch("/delete", whitelist, (req, res) => {
+router.patch("/delete", whitelist, validate, (req, res) => {
   Item.findOneAndUpdate(
     { _id: req.query.id, is_hidden: false },
     { is_hidden: true },
@@ -210,6 +211,10 @@ router.patch("/delete", whitelist, (req, res) => {
       }
     }
   );
+});
+
+router.post("/login", validate, (req, res) => {
+  return res.sendStatus(200);
 });
 
 module.exports = router;
