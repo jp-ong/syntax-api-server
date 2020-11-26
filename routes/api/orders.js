@@ -153,9 +153,11 @@ router.get("/:payStatus/:ordStatus", whitelist, (req, res) => {
   try {
     if (
       (req.params.payStatus !== "processing" &&
-        req.params.payStatus !== "paid") ||
+        req.params.payStatus !== "paid" &&
+        req.params.payStatus !== "cancelled") ||
       (req.params.ordStatus !== "processing" &&
-        req.params.ordStatus !== "delivered") ||
+        req.params.ordStatus !== "delivered" &&
+        req.params.ordStatus !== "cancelled") ||
       !req.params.payStatus ||
       !req.params.ordStatus
     ) {
