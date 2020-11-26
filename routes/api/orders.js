@@ -469,11 +469,14 @@ router.patch("/cancel", whitelist, (req, res) => {
 router.patch("/delete", whitelist, (req, res) => {
   try {
     Order.findOneAndUpdate(
-      { _id: req.query.id, is_deleted: false },
       {
-        is_deleted: true,
+        _id: req.query.id,
+        is_deleted: false,
         payment_status: "Cancelled",
         order_status: "Cancelled",
+      },
+      {
+        is_deleted: true,
         paid_on: null,
         delivered_on: null,
       },
