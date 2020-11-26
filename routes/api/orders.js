@@ -489,7 +489,9 @@ router.patch("/delete", whitelist, (req, res) => {
             error,
           });
         } else if (!order) {
-          return res.status(404).json({ msg: "Order not found.", status: 404 });
+          return res
+            .status(404)
+            .json({ msg: "Order cannot be deleted.", status: 404 });
         } else {
           return res
             .status(200)
