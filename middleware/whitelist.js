@@ -2,16 +2,16 @@ const whitelist = (req, res, next) => {
   const date = new Date().getTime();
 
   try {
-    const invIP = process.env.INV_IP;
-    const storeIP = process.env.STORE_IP;
-    const payIP = process.env.PAY_IP;
+    const invIP = process.env.INV_IP.split(",");
+    const storeIP = process.env.STORE_IP.split(",");
+    const payIP = process.env.PAY_IP.split(",");
     const devIP = process.env.DEV_IP.split(",");
     const whitelistStatus = process.env.WHITELIST_STATUS;
     if (
       !devIP.includes(req.ip) &&
-      invIP !== req.ip &&
-      storeIP !== req.ip &&
-      payIP !== req.ip &&
+      !invIP.includes(req.ip) &&
+      !storeIP.includes(req.ip) &&
+      !payIP.includes(req.ip) &&
       whitelistStatus != 0
     ) {
       console.error(`~~~~~@${date}~~~~~>${req.ip}~~~~~#DENIED~~~~~`);
