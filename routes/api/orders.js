@@ -468,40 +468,49 @@ router.patch("/cancel", whitelist, (req, res) => {
 
 router.patch("/delete", whitelist, (req, res) => {
   try {
-    Order.findOneAndUpdate(
-      {
-        _id: req.query.id,
-        is_deleted: false,
-        payment_status: "Cancelled",
-        order_status: "Cancelled",
-      },
-      {
-        is_deleted: true,
-        paid_on: null,
-        delivered_on: null,
-      },
-      { new: true },
-      (error, order) => {
-        if (error) {
-          return res.status(400).json({
-            msg: "Error occured while fetching Order.",
-            status: 400,
-            error,
-          });
-        } else if (!order) {
-          return res
-            .status(404)
-            .json({
-              msg: "Order must be cancelled before deleting.",
-              status: 404,
-            });
-        } else {
-          return res
-            .status(200)
-            .json({ msg: "Order deleted.", status: 200, order });
-        }
+    Order.findOne({ _id: req.query.id, is_deleted: false }, (error, order) => {
+      if (error) {
+        return res.status(400).json({ msg: "Invalid Order ID.", status: 400 });
+      } else if (!order) {
+        return res
+          .status(404)
+          .json({ msg: "Order does not exist.", status: 404 });
+      } else if (
+        order.order_status === "Processing" ||
+        order.payment_status === "Processing"
+      ) {
+        return res
+          .status(400)
+          .json({ msg: "Processing Orders cannot be deleted.", status: 400 });
+      } else {
+        return res
+          .status(200)
+          .json({ msg: "Order successfully deleted.", status: 200 });
       }
-    );
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ msg: "Internal Server Error.", status: 500, error });
+  }
+});
+
+router.patch("/admin/delete", whitelist, (req, res) => {
+  try {
+    Order.findOne({ _id: req.query.id, is_deleted: false }, (error, order) => {
+      if (error) {
+        return res.status(400).json({ msg: "Invalid Order ID.", status: 400 });
+      } else if (!order) {
+        return res
+          .status(404)
+          .json({ msg: "Order does not exist.", status: 404 });
+      } else {
+        return res
+          .status(200)
+          .json({ msg: "Order successfully deleted.", status: 200 });
+      }
+    });
   } catch (error) {
     console.error(error);
     return res
