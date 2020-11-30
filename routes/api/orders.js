@@ -486,7 +486,7 @@ router.patch("/delete", whitelist, (req, res) => {
         order.save({}, (error, order) => {
           return res
             .status(200)
-            .json({ msg: "Order successfully deleted.", status: 200 });
+            .json({ msg: "Order successfully deleted.", status: 200, order });
         });
       }
     });
@@ -512,7 +512,7 @@ router.patch("/admin/delete", whitelist, (req, res) => {
         order.save({}, (error, order) => {
           return res
             .status(200)
-            .json({ msg: "Order successfully deleted.", status: 200 });
+            .json({ msg: "Order successfully deleted.", status: 200, order });
         });
       }
     });
