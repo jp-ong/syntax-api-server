@@ -588,9 +588,21 @@
               </div>
               <div class="section-body-content-row-col">
                 <code>id: order id</code>
-                <code>Sets payment_status to Cancelled</code>
-                <code>Sets delivery_status to Cancelled</code>
-                <code>Temporarily disables order.</code>
+                <code>Deletes any non-processing order.</code>
+                <code>Temporarily deletes order.</code>
+              </div>
+            </div>
+            <div class="section-body-content-row">
+              <div class="section-body-content-row-col">
+                <code><strong>PATCH</strong></code>
+              </div>
+              <div class="section-body-content-row-col">
+                <code>/api/orders/admin/delete?id=xxx</code>
+              </div>
+              <div class="section-body-content-row-col">
+                <code>id: order id</code>
+                <code>Ignores order status.</code>
+                <code>Temporarily deletes order.</code>
               </div>
             </div>
           </div>
