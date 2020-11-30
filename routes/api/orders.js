@@ -483,9 +483,11 @@ router.patch("/delete", whitelist, (req, res) => {
           .status(400)
           .json({ msg: "Processing Orders cannot be deleted.", status: 400 });
       } else {
-        return res
-          .status(200)
-          .json({ msg: "Order successfully deleted.", status: 200 });
+        order.save({}, (error, order) => {
+          return res
+            .status(200)
+            .json({ msg: "Order successfully deleted.", status: 200 });
+        });
       }
     });
   } catch (error) {
@@ -506,9 +508,12 @@ router.patch("/admin/delete", whitelist, (req, res) => {
           .status(404)
           .json({ msg: "Order does not exist.", status: 404 });
       } else {
-        return res
-          .status(200)
-          .json({ msg: "Order successfully deleted.", status: 200 });
+        order.is_deleted = true;
+        order.save({}, (error, order) => {
+          return res
+            .status(200)
+            .json({ msg: "Order successfully deleted.", status: 200 });
+        });
       }
     });
   } catch (error) {
