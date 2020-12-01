@@ -182,7 +182,7 @@ router.patch("/edit", whitelist, validate, (req, res) => {
           .status(404)
           .json({ msg: "Item does not exist.", status: 404 });
       } else {
-        Item.findOne({ item_name: item.item_name }, (error, dupItem) => {
+        Item.findOne({ item_name: req.body.item_name }, (error, dupItem) => {
           if (error) {
             return res
               .status(400)
