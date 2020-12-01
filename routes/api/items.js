@@ -174,27 +174,51 @@ router.post("/post", whitelist, validate, (req, res) => {
 
 router.patch("/edit", whitelist, validate, (req, res) => {
   try {
-    Item.findOneAndUpdate(
-      { _id: req.query.id, is_hidden: false },
-      req.body,
-      { new: true },
-      (error, item) => {
-        if (error) {
-          console.error(error);
-          return res.status(400).json({
-            msg: "Error occurred while editing Item.",
-            status: 400,
-            error,
-          });
-        } else {
-          return item
-            ? res
-                .status(200)
-                .json({ msg: "Changes successfully saved.", status: 200, item })
-            : res.status(404).json({ msg: "Item not found.", status: 404 });
-        }
+    Item.findOne({ _id: req.query.id, is_hidden: false }, (error, item) => {
+      if (error) {
+        return res.status(400).json({ msg: "Invalid item id.", status: 400 });
+      } else if (!item) {
+        return res
+          .status(404)
+          .json({ msg: "Item does not exist.", status: 404 });
+      } else {
+        Item.find({ item_name: item.item_name }, (error, items) => {
+          if (error) {
+            return res
+              .status(400)
+              .json({ msg: "Something went wrong.", status: 400 });
+          } else if (items.length > 1) {
+            return res
+              .status(400)
+              .json({ msg: "Item name is already being used.", status: 400 });
+          } else {
+            item.item_name = req.body.item_name;
+            item.item_description = req.body.item_description;
+            item.item_price = req.body.item_price;
+            item.thumbnail = req.body.thumbnail;
+            item.images = req.body.images;
+            item.category = req.body.category;
+            item.tags = req.body.tags;
+            item.item_stock = req.body.item_stock;
+            item.save({}, (error, item) => {
+              if (error) {
+                return res
+                  .status(400)
+                  .json({ msg: "Something went wrong.", status: 400 });
+              } else {
+                return res
+                  .status(200)
+                  .json({
+                    msg: "Changes successfully saved.",
+                    status: 200,
+                    item,
+                  });
+              }
+            });
+          }
+        });
       }
-    );
+    });
   } catch (error) {
     console.error(error);
     return res
