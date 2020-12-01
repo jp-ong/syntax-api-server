@@ -138,18 +138,30 @@ router.post("/post", whitelist, validate, (req, res) => {
       item_stock: req.body.item_stock || 0,
     };
     const newItem = new Item(itemBody);
-    newItem.save({}, (error, item) => {
+    Item.findOne({ item_name: newItem.item_name }, (error, item) => {
       if (error) {
-        console.error(error);
-        return res.status(400).json({
-          msg: "Error occurred while posting Item.",
-          status: 400,
-          error,
-        });
-      } else {
         return res
-          .status(201)
-          .json({ msg: "Item successfully created.", status: 201, item });
+          .status(400)
+          .json({ msg: "Something went wrong.", status: 400 });
+      } else if (item) {
+        return res
+          .status(400)
+          .json({ msg: "Item already exists.", status: 400 });
+      } else {
+        newItem.save({}, (error, item) => {
+          if (error) {
+            console.error(error);
+            return res.status(400).json({
+              msg: "Error occurred while posting Item.",
+              status: 400,
+              error,
+            });
+          } else {
+            return res
+              .status(201)
+              .json({ msg: "Item successfully created.", status: 201, item });
+          }
+        });
       }
     });
   } catch (error) {
