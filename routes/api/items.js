@@ -182,12 +182,12 @@ router.patch("/edit", whitelist, validate, (req, res) => {
           .status(404)
           .json({ msg: "Item does not exist.", status: 404 });
       } else {
-        Item.find({ item_name: item.item_name }, (error, items) => {
+        Item.findOne({ item_name: item.item_name }, (error, dupItem) => {
           if (error) {
             return res
               .status(400)
               .json({ msg: "Something went wrong.", status: 400 });
-          } else if (items.length > 1) {
+          } else if (dupItem && item.item_name !== req.body.item_name) {
             return res
               .status(400)
               .json({ msg: "Item name is already being used.", status: 400 });
@@ -206,13 +206,11 @@ router.patch("/edit", whitelist, validate, (req, res) => {
                   .status(400)
                   .json({ msg: "Something went wrong.", status: 400 });
               } else {
-                return res
-                  .status(200)
-                  .json({
-                    msg: "Changes successfully saved.",
-                    status: 200,
-                    item,
-                  });
+                return res.status(200).json({
+                  msg: "Changes successfully saved.",
+                  status: 200,
+                  item,
+                });
               }
             });
           }
