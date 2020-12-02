@@ -204,7 +204,7 @@ router.patch("/edit", whitelist, validate, (req, res) => {
               if (error) {
                 return res
                   .status(400)
-                  .json({ msg: "Something went wrong.", status: 400 });
+                  .json({ msg: "Invalid data type detected.", status: 400 });
               } else {
                 return res.status(200).json({
                   msg: "Changes successfully saved.",
