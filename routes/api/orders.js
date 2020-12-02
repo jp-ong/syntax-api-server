@@ -483,6 +483,7 @@ router.patch("/delete", whitelist, (req, res) => {
           .status(400)
           .json({ msg: "Processing Orders cannot be deleted.", status: 400 });
       } else {
+        order.is_deleted = true;
         order.save({}, (error, order) => {
           return res
             .status(200)
