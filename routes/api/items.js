@@ -150,9 +150,8 @@ router.post("/post", whitelist, validate, (req, res) => {
       } else {
         newItem.save({}, (error, item) => {
           if (error) {
-            console.error(error);
             return res.status(400).json({
-              msg: "Error occurred while posting Item.",
+              msg: "Invalid data type detected.",
               status: 400,
               error,
             });
